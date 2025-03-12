@@ -5,6 +5,7 @@ import { CommentViewer } from "./CommentViewer";
 
 export const MultipleInputs = () => {
   const [hitStatus, setHitStatus] = useState();
+  const [hitCategories, setHitCategories] = useState("Pep");
   const [hitInput, setHitInput] = useState([]);
   const [isShow, setIsShow] = useState(false);
   const onHitStatusChanger = (data) => {
@@ -16,11 +17,26 @@ export const MultipleInputs = () => {
     setHitInput(data);
     setIsShow(true);
   };
+
+  const onHitCategories = (data) => {
+    setHitCategories(data);
+  };
+
   return (
     <Fragment>
-      <HitStatus onHitChannger={onHitStatusChanger} />
+      <HitStatus
+        onHitChannger={onHitStatusChanger}
+        onSelectCategories={onHitCategories}
+      />
       {/* location Hit inputs  */}
-      {hitStatus === "LocationDiscount" ? (
+      {hitStatus && (
+        <LocationForm
+          hitState={hitStatus}
+          onHitData={onHitDataHandler}
+          hitCategory={hitCategories}
+        />
+      )}
+      {/* {hitStatus === "LocationDiscount" ? (
         <LocationForm hitState={hitStatus} onHitData={onHitDataHandler} />
       ) : null}
       {hitStatus === "DOB Discount" ? (
@@ -31,11 +47,12 @@ export const MultipleInputs = () => {
       ) : null}
       {hitStatus === "Confirm" ? (
         <LocationForm hitState={hitStatus} onHitData={onHitDataHandler} />
-      ) : null}
+      ) : null} */}
       <CommentViewer
         hitState={hitStatus}
         inputData={hitInput}
         isShows={isShow}
+        hitCategory={hitCategories}
       />
     </Fragment>
   );

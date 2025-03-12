@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-export const CommentViewer = ({ inputData, isShows, hitState }) => {
+export const CommentViewer = ({
+  inputData,
+  isShows,
+  hitState,
+  hitCategory,
+}) => {
   const [text, setText] = useState([]);
   const [tick, setTick] = useState(false);
 
@@ -20,14 +25,24 @@ export const CommentViewer = ({ inputData, isShows, hitState }) => {
 
       break;
     case "DOB Discount":
-      comments = ` Match : UID:(${text.uid}) The BOI customer name is ${text.cusName} DOB is ${text.cusLocation} . Whereas the screening hit is against the name ${text.hitName} DOB is ${text.hitlocation}. Hence, Hit is tentatively discounted based on DOB mismatch.`;
+      comments = ` Match : UID:(${text.uid}) The BOI customer name is ${text.cusName} DOB is ${text.customerDOB} . Whereas the screening hit is against the name ${text.hitName} DOB is ${text.hitsDob}. Hence, Hit is tentatively discounted based on DOB mismatch.`;
       break;
     case "IndividualDiscount":
       comments = `Match : UID:(${text.uid}) The BOI Client name is ${text.cusName} Limited(Entity) , Where the screening hit is against the name ${text.hitName} (individual), Hence Hit is tentatively discounted based on Entity vs individual name mismatch`;
       break;
 
     case "Confirm":
-      comments = `Match : ${text.uid} The BOI customer name is ${text.cusName} resident in ${text.cusLocation} and the screening hit is against the name ${text.hitName} resident in ${text.cusLocation}. who is ${text.hitOccupation} , The BOI Customer cannot be discounted as per BOI policy and the HIT is PEP, Hence tentatively confirmed `;
+      comments = `Match : UID:(${text.uid}) The BOI customer name is ${
+        text.cusName
+      } resident in ${
+        text.cusLocation
+      } and the screening hit is against the name ${text.hitName} resident in ${
+        text.cusLocation
+      }${
+        text.hitOccupation ? ". who is" + text.hitOccupation : ","
+      }The BOI Customer cannot be discounted as per BOI policy and the HIT is ${
+        hitCategory !== "Pep" ? "sanction" : "PEP"
+      }, Hence tentatively confirmed `;
       break;
     default:
       break;

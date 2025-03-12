@@ -1,19 +1,25 @@
 import React, { Fragment, useState } from "react";
 
-export const LocationForm = ({ onHitData, hitState }) => {
+export const LocationForm = ({ onHitData, hitState, hitCategory }) => {
   const [cusName, setCusName] = useState("");
   const [cusLocation, setcusLocation] = useState("");
+  const [cusDob, setcusDob] = useState("");
   const [hitName, sethitName] = useState("");
   const [hitlocation, sethitlocation] = useState("");
+  const [hitDOB, sethitDOB] = useState("");
   const [hitOccupation, sethitOccupation] = useState("");
   const [uid, setUID] = useState("");
   const SubmitHandler = (e) => {
     e.preventDefault();
+    let customerDOB = cusDob.split("-").reverse().join("/");
+    let hitsDob = hitDOB.split("-").reverse().join("/");
     onHitData({
       cusName,
       cusLocation,
       hitName,
+      customerDOB,
       hitlocation,
+      hitsDob,
       uid,
       hitOccupation,
     });
@@ -28,6 +34,10 @@ export const LocationForm = ({ onHitData, hitState }) => {
   const onChangeHandler = (st, e) => {
     if (st === "name") {
       setCusName(e.target.value);
+    } else if (st === "cusDob") {
+      setcusDob(e.target.value);
+    } else if (st === "hitDob") {
+      sethitDOB(e.target.value);
     } else if (st === "location") {
       setcusLocation(e.target.value);
     } else if (st === "hitPersonName") {
@@ -47,19 +57,21 @@ export const LocationForm = ({ onHitData, hitState }) => {
         onSubmit={SubmitHandler}
         className="flex mt-11 w-full justify-around items-center flex-wrap gap-4"
       >
-        <div className="flex box-border ">
-          <label className="pr-1" htmlFor="UID">
-            UID
-          </label>
-          <input
-            id="UID"
-            className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1 mr-2 "
-            required
-            onChange={(e) => onChangeHandler("UID", e)}
-            type="number"
-            value={uid}
-          />
-        </div>
+        {hitCategory === "Pep" && (
+          <div className="flex box-border ">
+            <label className="pr-1" htmlFor="UID">
+              UID
+            </label>
+            <input
+              id="UID"
+              className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1 mr-2 "
+              required
+              onChange={(e) => onChangeHandler("UID", e)}
+              type="number"
+              value={uid}
+            />
+          </div>
+        )}
         <div className="flex box-border ">
           <label className="pr-1" htmlFor="name">
             CustomerName
@@ -74,22 +86,31 @@ export const LocationForm = ({ onHitData, hitState }) => {
             value={cusName}
           />
         </div>
-        {hitState === "IndividualDiscount" ? (
-          ""
-        ) : (
-          <div className="flex box-border">
+        {hitState === "IndividualDiscount" ? null : (
+          <div className="flex items-center box-border">
             <label className="pr-1" htmlFor="cuslocationanddate">
-              Customerlocation
+              {hitState === "DOB Discount" ? "CustomerDOB" : "Customerlocation"}
             </label>
-            <input
-              id="cuslocationanddate"
-              placeholder="Location"
-              className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1"
-              required
-              type={hitState === "DOB Discount" ? "date" : "text"}
-              onChange={(e) => onChangeHandler("location", e)}
-              value={cusLocation}
-            />
+            {hitState === "DOB Discount" ? (
+              <input
+                id="cuslocationanddate"
+                className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1"
+                required
+                type="date"
+                onChange={(e) => onChangeHandler("cusDob", e)}
+                value={cusDob}
+              />
+            ) : (
+              <input
+                id="cuslocationanddate"
+                placeholder="Location"
+                className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1"
+                required
+                type="text"
+                onChange={(e) => onChangeHandler("location", e)}
+                value={cusLocation}
+              />
+            )}
           </div>
         )}
         <div className="flex box-border ">
@@ -111,9 +132,33 @@ export const LocationForm = ({ onHitData, hitState }) => {
         ) : (
           <div className="flex box-border ">
             <label className="pr-1" htmlFor="hitlocationdate">
-              HitPersonLocation
+              {hitState === "DOB Discount"
+                ? "HitPersonDOB"
+                : "HitPersonLocation"}
             </label>
-            <input
+            {hitState === "DOB Discount" ? (
+              <input
+                className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1"
+                required
+                type="date"
+                onChange={(e) => onChangeHandler("hitDob", e)}
+                value={hitDOB}
+              />
+            ) : (
+              <input
+                id="hitlocationdate"
+                placeholder="Location"
+                className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1"
+                required
+                value={hitlocation}
+                type="text"
+                onChange={(e) => onChangeHandler("HitPersonLocation", e)}
+              />
+            )}
+          </div>
+        )}
+
+        {/* <input
               id="hitlocationdate"
               placeholder="Location"
               className="border-2 border-gray-700 outline-none rounded-md text-md placeholder:text-sm pl-1"
@@ -123,7 +168,7 @@ export const LocationForm = ({ onHitData, hitState }) => {
               onChange={(e) => onChangeHandler("HitPersonLocation", e)}
             />
           </div>
-        )}
+        )} */}
         {hitState === "Confirm" ? (
           <div className="  flex items-center mt-4 border-gray-700">
             <label htmlFor="occupation">Occupation</label>
